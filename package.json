@@ -20,7 +20,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:mutlichange.multichangeView",
+		"onView:multichange.multichangeView",
 		"onCommand:multichange.addChange",
 		"onCommand:multichange.transform",
 		"onCommand:multichange.save",
@@ -32,7 +32,7 @@
 			"explorer": [
 				{
 					"type": "webview",
-					"id": "mutlichange.multichangeView",
+					"id": "multichange.multichangeView",
 					"name": "Multichange"
 				}
 			]
@@ -51,20 +51,27 @@
 			{
 				"command": "multichange.save",
 				"category": "Multichange",
-				"title": "Save"
+				"title": "Save",
+				"icon": "$(save)"
 			},
 			{
 				"command": "multichange.import",
 				"category": "Multichange",
-				"title": "Import"
+				"title": "Import",
+				"icon": "$(symbol-file)"
 			}
 		],
 		"menus": {
 			"view/title": [
 				{
-					"command": "multichange.transform",
+					"command": "multichange.save",
 					"group": "navigation",
-					"when": "view == mutlichange.multichangeView"
+					"when": "view == multichange.multichangeView"
+				},
+				{
+					"command": "multichange.import",
+					"group": "navigation",
+					"when": "view == multichange.multichangeView"
 				}
 			]
 		}
@@ -81,5 +88,9 @@
 		"@typescript-eslint/parser": "^4.16.0",
 		"eslint": "^7.21.0",
 		"typescript": "^4.4.3"
+	},
+	"dependencies": {
+		"@vscode/codicons": "^0.0.26",
+		"@vscode/webview-ui-toolkit": "^0.8.4"
 	}
 }

@@ -1,10 +1,68 @@
+:root {
+	--icon-width: 18px;
+}
+
 body {
 	background-color: transparent;
 }
 
-.color-list {
+.change-list {
 	list-style: none;
 	padding: 0;
+}
+.change-options {
+	display: flex;
+	flex-direction: row;
+}
+.multichange-input-fields {
+    display: flex;
+	position: relative;
+    flex-direction: column;
+    height: calc((var(--input-height) + var(--border-width) + var(--design-unit)) * 2px);
+	width: calc(100% - 24px);
+    justify-content: space-around;
+}
+
+li.change {
+    position:  relative;
+}
+
+.find-options {
+    position: absolute;
+    top: calc(var(--design-unit) * 0.5px);
+    right: calc(var(--design-unit) * 1px);;
+    display: flex;
+    height: calc(var(--input-height) * 1px);
+    width: 84px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.rank-options {
+    width: calc(var(--icon-width) + var(--design-unit) * 1px);
+    height: calc((var(--input-height) + var(--border-width) + var(--design-unit)) * 2px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.change-options .codicon {
+	color: #c5c5c5;
+	width: var(--icon-width);
+	height: var(--icon-width);
+	opacity: 0.7;
+}
+.change-options .codicon:hover {
+	opacity: 1;
+}
+
+.change-options .codicon.disabled {
+	opacity: 0;
+	cursor: arrow;
+}
+
+.change-options .codicon.set {
+	border-color: rgb(117, 113, 94); color: rgb(255, 255, 255); background-color: rgba(117, 113, 94, 0.4);
 }
 
 .color-entry {
