@@ -1,104 +1,107 @@
 {
-	"name": "multichange",
-	"description": "Multi Change - a VS code exension to chain multiple find/replace commands",
-	"version": "0.0.1",
-	"publisher": "jckr",
-	"private": true,
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/jckr/multichange"
-	},
-	"engines": {
-		"vscode": "^1.50.0"
-	},
-	"extensionKind": [
-		"ui",
-		"workspace"
-	],
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onView:multichange.multichangeView",
-		"onCommand:multichange.addChange",
-		"onCommand:multichange.transform",
-		"onCommand:multichange.save",
-		"onCommand:multichange.import"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"views": {
-			"explorer": [
-				{
-					"type": "webview",
-					"id": "multichange.multichangeView",
-					"name": "Multichange"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "multichange.addChange",
-				"category": "Multichange",
-				"title": "Add change"
-			},
-			{
-				"command": "multichange.transform",
-				"category": "Multichange",
-				"title": "Transform"
-			},
-			{
-				"command": "multichange.save",
-				"category": "Multichange",
-				"title": "Save",
-				"icon": "$(save)"
-			},
-			{
-				"command": "multichange.import",
-				"category": "Multichange",
-				"title": "Import",
-				"icon": "$(symbol-file)"
-			}
-		],
-		"menus": {
-			"view/title": [
-				{
-					"command": "multichange.save",
-					"group": "navigation",
-					"when": "view == multichange.multichangeView"
-				},
-				{
-					"command": "multichange.import",
-					"group": "navigation",
-					"when": "view == multichange.multichangeView"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -w -p ./",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/vscode": "^1.50.0",
-		"@types/glob": "^7.1.4",
-		"@types/mocha": "^9.0.0",
-		"@types/node": "14.x",
-		"@typescript-eslint/eslint-plugin": "^4.16.0",
-		"@typescript-eslint/parser": "^4.16.0",
-		"eslint": "^7.21.0",
-		"glob": "^7.1.7",
-		"mocha": "^9.1.3",
-		"typescript": "^4.4.4",
-		"@vscode/test-electron": "^1.6.2"
-
-	},
-	"dependencies": {
-		"@vscode/codicons": "^0.0.26",
-		"@vscode/webview-ui-toolkit": "^0.8.4"
-	}
+  "name": "multichange",
+  "description": "Multi Change - a VS code exension to chain multiple find/replace commands",
+  "version": "0.0.1",
+  "publisher": "jckr",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jckr/multichange"
+  },
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:multichange.multichangeView",
+    "onCommand:multichange.addChange",
+    "onCommand:multichange.transform",
+    "onCommand:multichange.save",
+    "onCommand:multichange.import"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "multichange.multichangeView",
+          "name": "Multichange"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "multichange.addChange",
+        "category": "Multichange",
+        "title": "Add change"
+      },
+      {
+        "command": "multichange.transform",
+        "category": "Multichange",
+        "title": "Transform"
+      },
+      {
+        "command": "multichange.save",
+        "category": "Multichange",
+        "title": "Save",
+        "icon": "$(save)"
+      },
+      {
+        "command": "multichange.import",
+        "category": "Multichange",
+        "title": "Import",
+        "icon": "$(symbol-file)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "multichange.save",
+          "group": "navigation",
+          "when": "view == multichange.multichangeView"
+        },
+        {
+          "command": "multichange.import",
+          "group": "navigation",
+          "when": "view == multichange.multichangeView"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "watch": "tsc -w -p ./",
+    "test": "node ./out/test/runTest.js",
+    "vscode:prepublish": "npm run esbuild-base -- --minify",
+    "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+    "esbuild": "npm run esbuild-base -- --sourcemap",
+    "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+    "test-compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.50.0",
+    "@typescript-eslint/eslint-plugin": "^4.16.0",
+    "@typescript-eslint/parser": "^4.16.0",
+    "@vscode/test-electron": "^1.6.2",
+    "esbuild": "^0.14.0",
+    "eslint": "^7.21.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.1.3",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@vscode/codicons": "^0.0.26",
+    "@vscode/webview-ui-toolkit": "^0.8.4"
+  }
 }
