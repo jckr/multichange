@@ -16,10 +16,8 @@ body {
 }
 .multichange-input-fields {
     display: flex;
-	position: relative;
     flex-direction: column;
-    height: calc((var(--input-height) + var(--border-width) + var(--design-unit)) * 2px);
-	width: calc(100% - 24px);
+	width: 100%;
     justify-content: space-around;
 }
 
@@ -27,20 +25,24 @@ li.change {
     position:  relative;
 }
 
+.input-block {
+	position: relative;
+}
+
+.input-block vscode-text-field {
+	width: 100%;
+}
+
 .find-options {
     position: absolute;
-    top: calc(var(--design-unit) * 0.5px);
-    right: calc(var(--design-unit) * 1px);;
+    top: 0;
+    right: 0;
     display: flex;
-    height: calc(var(--input-height) * 1px);
-    width: 84px;
     flex-direction: row;
     align-items: center;
 }
 
 .rank-options {
-    width: calc(var(--icon-width) + var(--design-unit) * 1px);
-    height: calc((var(--input-height) + var(--border-width) + var(--design-unit)) * 2px);
     display: flex;
     flex-direction: column;
     justify-content: space-around;
