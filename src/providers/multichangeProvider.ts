@@ -98,7 +98,6 @@ export class MultichangeViewProvider implements WebviewViewProvider {
 
   private _handleTransform(changes: Array<Change>) {
     const replacers = getReplacers(changes);
-    window.showInformationMessage(JSON.stringify(changes));
     if (window.activeTextEditor) {
       const editor = window.activeTextEditor;
       let text = getWholeText(editor);

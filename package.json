@@ -1,13 +1,13 @@
 {
   "name": "multichange",
   "description": "Multi Change - a VS code exension to chain multiple find/replace commands",
-  "version": "0.0.3",
-  "publisher": "jckr",
+  "version": "0.0.4",
+  "publisher": "Jerome Cukier",
   "private": true,
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jckr/multichange"
+    "url": "https://github.com/Jerome Cukier/multichange"
   },
   "engines": {
     "vscode": "^1.50.0"
