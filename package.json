@@ -1,7 +1,7 @@
 {
   "name": "multichange",
   "description": "Multi Change - a VS code exension to chain multiple find/replace commands",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "publisher": "jckr",
   "private": true,
   "license": "MIT",
