@@ -18,11 +18,11 @@ export class WebView {
    * @typedef {Object} ElementSpec
    * @property {string} type
    * @property {string} [appearance]
-   * @property {string} [value]
+   * @property {string} [ariaLabel]
    * @property {string} [className]
    * @property {string} [placeholder]
-   * @property {string} [ariaLabel]
-   * @property {string} [role]
+   * @property {string} [textContent]
+   * @property {string} [value]
    * @property {function} [onclick]
    * @property {function} [onchange]
    * @property {Array<ElementSpec>} [children]
@@ -30,6 +30,8 @@ export class WebView {
 
   /** @type {Array<Change>} */
   changes = [];
+  /** @type boolean */
+  multiEditor = false;
 
   /**
    * @param {() => {getState: () => object, setState: (data: object) => void, postMessage: (message: unknown) => void }} acquireVsCodeApi
@@ -40,8 +42,9 @@ export class WebView {
   }
 
   init = () => {
-    const oldState = this._vscode.getState() || {changes: []};
+    const oldState = this._vscode.getState() || {changes: [], multiEditor: false};
     this.changes = oldState.changes;
+    this.multiEditor = oldState.multiEditor;
 
     document.querySelector('.add-change').addEventListener('click', () => {
       this.changes.push({});
@@ -49,7 +52,21 @@ export class WebView {
     });
 
     document.querySelector('.transform').addEventListener('click', () => {
-      this._vscode.postMessage({type: 'send_changes_for_transforming', value: this.changes});
+      this._vscode.postMessage({
+        type: 'send_changes_for_transforming',
+        value: {changes: this.changes, multiEditor: this.multiEditor},
+      });
+    });
+    
+    document
+      .querySelector('vscode-button.details')
+      .addEventListener('click', () =>
+        document.querySelector('section.details').classList.toggle('visible')
+      );
+
+    document.querySelector('.multi-editor-toggle').addEventListener('click', () => {
+      this.multiEditor = !this.multiEditor;
+      this.updateChangeList();
     });
 
     // Handle messages sent from the extension to the webview
@@ -81,6 +98,14 @@ export class WebView {
   updateChangeList = () => {
     const ul = document.querySelector('ul.change-list');
     ul.textContent = '';
+    if (this.changes.length === 0) {
+      ul.appendChild(
+        this.createHTMLElement({
+          type: 'li',
+          textContent: 'No find/replace operation. Click "add change" to get started.',
+        })
+      );
+    }
     for (let i = 0; i < this.changes.length; i++) {
       const change = this.changes[i];
       const li = this.createHTMLElement({
@@ -217,10 +242,30 @@ export class WebView {
       });
       ul.appendChild(li);
     }
+    this.updateMultiEditorButton();
     // Update the saved state
-    this._vscode.setState({changes: this.changes});
+    this._vscode.setState({changes: this.changes, multiEditor: this.multiEditor});
   };
 
+  updateMultiEditorButton = () => {
+    const statusSingle = 'Now searching/replacing in the active editor.';
+    const statusMulti = 'Now searching/replacing in all visible editors.';
+
+    const labelSingle = 'Search/replace in the active editor';
+    const labelMulti = 'Search/replace in all visible editors';
+    document.querySelector('.multi-editor-status').textContent = this.multiEditor
+      ? statusMulti
+      : statusSingle;
+    document.querySelector('.multi-editor-toggle').ariaLabel = this.multiEditor
+      ? labelSingle
+      : labelMulti;
+    document.querySelector('.multi-editor-toggle-label').textContent = this.multiEditor
+      ? labelSingle
+      : labelMulti;
+    document.querySelector('.multi-editor-toggle span').className = `codicon codicon-${
+      this.multiEditor ? 'file' : 'book'
+    }`;
+  };
   /**
    * @param {string} property
    * @param {number} i

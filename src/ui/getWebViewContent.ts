@@ -49,15 +49,36 @@ export function getWebviewContent(webview: Webview, extensionUri: Uri) {
      <title>Multichange</title>
    </head>
    <body>
-     <section class="changes">
-       <ul class="change-list">
-       </ul>
-     </section>
-     <section class="controls">
-       <vscode-button class="add-change" appearance="secondary">Add change</vscode-button>
-       <vscode-button class="transform" >Apply changes</vscode-button>
-     </section>
-     <script type="module" src="${scriptUri}"></script>
+    <section class="changes">
+      <ul class="change-list">
+      </ul>
+    </section>
+    <div class="toggle-details">
+      <vscode-button class="details" appearance="icon" ariaLabel="toggle search details">
+        <span class="codicon codicon-ellipsis"></span>
+      </vscode-button>
+    </div>
+    <section class="details">
+      <div class="multi-editor">
+        <div class="multi-editor-status">
+          Search and replace in the active editor
+        </div>
+        <vscode-button class="multi-editor-toggle" ariaLabel="search/replace in the all editors">
+          <div class="multi-editor-toggle-label">search/replace in all the editors</div>
+          <span slot="start" class="codicon codicon-book"></span>
+        </vscode-button>
+      </div>
+      <div class="save-import">
+      <vscode-button class="save-config" appearance="secondary">Save config</vscode-button>
+      <vscode-button class="import-config" appearance="secondary">Import config</vscode-button>
+      </div>
+      <vscode-divider></vscode-divider>
+    </section>
+    <section class="controls">
+      <vscode-button class="add-change" appearance="secondary">Add change</vscode-button>
+      <vscode-button class="transform" >Apply changes</vscode-button>
+    </section>
+    <script type="module" src="${scriptUri}"></script>
    </body>
    </html>`;
 }

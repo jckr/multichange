@@ -42,7 +42,7 @@ export class MultichangeViewProvider implements WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage((data) => {
       switch (data.type) {
         case 'send_changes_for_transforming': {
-          this._handleTransform(data.value);
+          this._handleTransform(data.value.changes, data.value.multiEditor);
           break;
         }
         case 'send_changes_for_saving': {
@@ -96,18 +96,20 @@ export class MultichangeViewProvider implements WebviewViewProvider {
     openInUntitled(JSON.stringify(changes, null, 2), 'json');
   }
 
-  private _handleTransform(changes: Array<Change>) {
+  private _handleTransform(changes: Array<Change>, multiEditor: boolean){
+    if (multiEditor && window.visibleTextEditors.length === 0 || !window.activeTextEditor) {
+      return window.showWarningMessage('No active text editor');
+    }
     const replacers = getReplacers(changes);
-    if (window.activeTextEditor) {
-      const editor = window.activeTextEditor;
+
+    const editors = multiEditor ? window.visibleTextEditors : [window.activeTextEditor];
+    for (const editor of editors) {
       let text = getWholeText(editor);
       for (const replacer of replacers) {
         text = replacer(text);
       }
       const rangeOfEntireDocument = getRangeOfEntireDocument(editor);
       editor.edit((editBuilder) => editBuilder.replace(rangeOfEntireDocument, text));
-    } else {
-      window.showWarningMessage('No active text editor');
     }
   }    
 }
