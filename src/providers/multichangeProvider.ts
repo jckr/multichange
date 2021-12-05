@@ -5,6 +5,8 @@ import {
   WebviewViewProvider,
   WebviewViewResolveContext,
   window,
+  workspace,
+  WorkspaceEdit,
 } from 'vscode';
 
 import {getWebviewContent} from '../ui/getWebViewContent';
@@ -97,21 +99,33 @@ export class MultichangeViewProvider implements WebviewViewProvider {
   }
 
   private _handleTransform(changes: Array<Change>, multiEditor: boolean){
-    if (multiEditor && window.visibleTextEditors.length === 0 || !window.activeTextEditor) {
-      return window.showWarningMessage('No active text editor');
-    }
-    const replacers = getReplacers(changes);
-
-    const editors = multiEditor ? window.visibleTextEditors : [window.activeTextEditor];
-    for (const editor of editors) {
-      let text = getWholeText(editor);
-      for (const replacer of replacers) {
-        text = replacer(text);
+    if (multiEditor) {
+      const documents = workspace.textDocuments;
+      const replacers = getReplacers(changes);
+      for (const document of documents) {
+        const edit = new WorkspaceEdit();
+        let text = document.getText();
+        for (const replacer of replacers) {
+          text = replacer(text);
+        }
+        edit.replace(document.uri, getRangeOfEntireDocument(document), text);
+        new Promise((resolve) => resolve(workspace.applyEdit(edit)));
       }
-      const rangeOfEntireDocument = getRangeOfEntireDocument(editor);
-      editor.edit((editBuilder) => editBuilder.replace(rangeOfEntireDocument, text));
+    } else {
+      if (!window.activeTextEditor) {
+        return window.showWarningMessage('No active text editor');
+      }
+      const replacers = getReplacers(changes);
+
+      const editor = window.activeTextEditor;
+        let text = getWholeText(editor);
+        for (const replacer of replacers) {
+          text = replacer(text);
+        }
+        const rangeOfEntireDocument = getRangeOfEntireDocument(editor.document);
+        editor.edit((editBuilder) => editBuilder.replace(rangeOfEntireDocument, text));
     }
-  }    
+  }
 }
 
 function getReplacers(changes: Array<Change>) {

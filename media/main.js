@@ -57,7 +57,7 @@ export class WebView {
         value: {changes: this.changes, multiEditor: this.multiEditor},
       });
     });
-    
+
     document
       .querySelector('vscode-button.details')
       .addEventListener('click', () =>
@@ -254,16 +254,16 @@ export class WebView {
     const labelSingle = 'Search/replace in the active editor';
     const labelMulti = 'Search/replace in all visible editors';
     document.querySelector('.multi-editor-status').textContent = this.multiEditor
-      ? statusMulti
-      : statusSingle;
+      ? statusSingle
+      : statusMulti;
     document.querySelector('.multi-editor-toggle').ariaLabel = this.multiEditor
-      ? labelSingle
-      : labelMulti;
+      ? labelMulti
+      : labelSingle;
     document.querySelector('.multi-editor-toggle-label').textContent = this.multiEditor
-      ? labelSingle
-      : labelMulti;
+      ? labelMulti
+      : labelSingle;
     document.querySelector('.multi-editor-toggle span').className = `codicon codicon-${
-      this.multiEditor ? 'file' : 'book'
+      this.multiEditor ? 'book' : 'file'
     }`;
   };
   /**

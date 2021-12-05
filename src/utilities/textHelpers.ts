@@ -1,5 +1,6 @@
 import {
     Range,
+    TextDocument,
     TextEditor,
     window,
     workspace,
@@ -19,12 +20,12 @@ export function getWholeText(editor: TextEditor) {
 /**
  * A helper function which will return a range from the beginning to the end of a given editor
  *
- * @param editor the editor from which the range is computed.
+ * @param document the editor from which the range is computed.
  * @returns A TextDocument Range
  */
-  export function getRangeOfEntireDocument(editor: TextEditor) {
-    const firstLine = editor.document.lineAt(0);
-    const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
+  export function getRangeOfEntireDocument(document: TextDocument) {
+    const firstLine = document.lineAt(0);
+    const lastLine = document.lineAt(document.lineCount - 1);
     return new Range(firstLine.range.start, lastLine.range.end);
   }
   
