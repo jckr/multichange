@@ -1,100 +1,96 @@
 :root {
-	--icon-width: 18px;
+  --icon-width: 18px;
 }
 
 body {
-	background-color: transparent;
+  background-color: transparent;
 }
 
+.toggle-details {
+  display: flex;
+  justify-content: flex-end;
+  height: 0;
+}
+.add-change, .transform {
+  width: calc(100% - 24px);
+}
+
+.multi-editor-status {
+  width: calc(100% - 24px);
+}
+
+.save-import {
+  display: flex;
+  flex-direction: row;
+}
 .change-list {
-	list-style: none;
-	padding: 0;
+  list-style: none;
+  padding: 0;
 }
 .change-options {
-	display: flex;
-	flex-direction: row;
+  display: flex;
+  flex-direction: row;
 }
 .multichange-input-fields {
-    display: flex;
-    flex-direction: column;
-	width: 100%;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: space-around;
 }
 
 li.change {
-    position:  relative;
+  position: relative;
 }
 
 .input-block {
-	position: relative;
+  position: relative;
 }
 
 .input-block vscode-text-field {
-	width: 100%;
+  width: 100%;
 }
 
 .find-options {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .rank-options {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .change-options .codicon {
-	color: #c5c5c5;
-	width: var(--icon-width);
-	height: var(--icon-width);
-	opacity: 0.7;
+  color: #c5c5c5;
+  width: var(--icon-width);
+  height: var(--icon-width);
+  opacity: 0.7;
 }
 .change-options .codicon:hover {
-	opacity: 1;
+  opacity: 1;
 }
 
 .change-options .codicon.disabled {
-	opacity: 0;
-	cursor: arrow;
+  opacity: 0;
+  cursor: arrow;
 }
 
 .change-options .codicon.set {
-	border-color: rgb(117, 113, 94); color: rgb(255, 255, 255); background-color: rgba(117, 113, 94, 0.4);
+  border-color: rgb(117, 113, 94);
+  color: rgb(255, 255, 255);
+  background-color: rgba(117, 113, 94, 0.4);
+}
+.controls {
+	position: relative;
+	
 }
 
-.color-entry {
-	width: 100%;
-	display: flex;
-	margin-bottom: 0.4em;
-	border: 1px solid var(--vscode-input-border);
-}
-
-.color-preview {
-	width: 2em;
-	height: 2em;
-}
-
-.color-preview:hover {
-	outline: inset white;
-}
-
-.color-input {
-	display: block;
-	flex: 1;
-	width: 100%;
-	color: var(--vscode-input-foreground);
-	background-color: var(--vscode-input-background);
-	border: none;
-	padding: 0 0.6em;
-}
-
-.add-color-button {
-	display: block;
-	border: none;
-	margin: 0 auto;
+.controls .multi-editor-toggle {
+	position: absolute;
+	right: 0;
 }

@@ -1,5 +1,5 @@
-import { Webview, Uri } from "vscode";
-import { getUri } from "../utilities/getUri";
+import {Webview, Uri} from 'vscode';
+import {getUri} from '../utilities/getUri';
 
 /**
  * Defines and returns the HTML that should be rendered within the multichange webview panel.
@@ -13,29 +13,29 @@ import { getUri } from "../utilities/getUri";
  * rendered within the webview panel
  */
 export function getWebviewContent(webview: Webview, extensionUri: Uri) {
- // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
- const scriptUri = getUri(webview, extensionUri, ['media', 'main.js']);
- // get uri to webview UI toolkit code
- const toolkitUri = getUri(webview, extensionUri, [
-   'node_modules',
-   '@vscode',
-   'webview-ui-toolkit',
-   'dist',
-   'toolkit.js',
- ]);
- const codiconsUri = getUri(webview, extensionUri, [
-   'node_modules',
-   '@vscode/codicons',
-   'dist',
-   'codicon.css',
- ]);
+  // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+  const scriptUri = getUri(webview, extensionUri, ['media', 'main.js']);
+  // get uri to webview UI toolkit code
+  const toolkitUri = getUri(webview, extensionUri, [
+    'node_modules',
+    '@vscode',
+    'webview-ui-toolkit',
+    'dist',
+    'toolkit.js',
+  ]);
+  const codiconsUri = getUri(webview, extensionUri, [
+    'node_modules',
+    '@vscode/codicons',
+    'dist',
+    'codicon.css',
+  ]);
 
- // Do the same for the stylesheet.
- const styleResetUri = getUri(webview, extensionUri, ['media', 'reset.css']);
- const styleVSCodeUri = getUri(webview, extensionUri, ['media', 'vscode.css']);
- const styleMainUri = getUri(webview, extensionUri, ['media', 'main.css']);
+  // Do the same for the stylesheet.
+  const styleResetUri = getUri(webview, extensionUri, ['media', 'reset.css']);
+  const styleVSCodeUri = getUri(webview, extensionUri, ['media', 'vscode.css']);
+  const styleMainUri = getUri(webview, extensionUri, ['media', 'main.css']);
 
- return /*html*/ `<!DOCTYPE html>
+  return /*html*/ `<!DOCTYPE html>
    <html lang="en">
    <head>
      <meta charset="UTF-8">
@@ -49,15 +49,16 @@ export function getWebviewContent(webview: Webview, extensionUri: Uri) {
      <title>Multichange</title>
    </head>
    <body>
-     <section class="changes">
-       <ul class="change-list">
-       </ul>
-     </section>
-     <section class="controls">
-       <vscode-button class="add-change" appearance="secondary">Add change</vscode-button>
-       <vscode-button class="transform" >Apply changes</vscode-button>
-     </section>
-     <script type="module" src="${scriptUri}"></script>
+    <section class="changes">
+      <ul class="change-list">
+      </ul>
+    </section>
+    <vscode-button class="add-change" appearance="secondary">Add change
+    <span slot="start" class="codicon codicon-add"></span>
+    </vscode-button>
+    <section class="controls">
+    </section>
+    <script type="module" src="${scriptUri}"></script>
    </body>
    </html>`;
 }

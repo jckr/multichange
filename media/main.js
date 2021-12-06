@@ -18,11 +18,12 @@ export class WebView {
    * @typedef {Object} ElementSpec
    * @property {string} type
    * @property {string} [appearance]
-   * @property {string} [value]
+   * @property {string} [ariaLabel]
    * @property {string} [className]
    * @property {string} [placeholder]
-   * @property {string} [ariaLabel]
-   * @property {string} [role]
+   * @property {string} [slot]
+   * @property {string} [textContent]
+   * @property {string} [value]
    * @property {function} [onclick]
    * @property {function} [onchange]
    * @property {Array<ElementSpec>} [children]
@@ -30,6 +31,8 @@ export class WebView {
 
   /** @type {Array<Change>} */
   changes = [];
+  /** @type boolean */
+  multiEditor = false;
 
   /**
    * @param {() => {getState: () => object, setState: (data: object) => void, postMessage: (message: unknown) => void }} acquireVsCodeApi
@@ -40,16 +43,13 @@ export class WebView {
   }
 
   init = () => {
-    const oldState = this._vscode.getState() || {changes: []};
+    const oldState = this._vscode.getState() || {changes: [], multiEditor: false};
     this.changes = oldState.changes;
+    this.multiEditor = oldState.multiEditor;
 
     document.querySelector('.add-change').addEventListener('click', () => {
       this.changes.push({});
       this.updateChangeList();
-    });
-
-    document.querySelector('.transform').addEventListener('click', () => {
-      this._vscode.postMessage({type: 'send_changes_for_transforming', value: this.changes});
     });
 
     // Handle messages sent from the extension to the webview
@@ -75,12 +75,32 @@ export class WebView {
     this.updateChangeList();
   };
 
+  handleTransform = () => {
+    this._vscode.postMessage({
+      type: 'send_changes_for_transforming',
+      value: {changes: this.changes, multiEditor: this.multiEditor},
+    });
+  };
+
+  handleMultiEditorToggle = () => {
+    this.multiEditor = !this.multiEditor;
+    this.updateChangeList();
+  };
+
   /**
    * updates the UI following any update to the state
    */
   updateChangeList = () => {
     const ul = document.querySelector('ul.change-list');
     ul.textContent = '';
+    if (this.changes.length === 0) {
+      ul.appendChild(
+        this.createHTMLElement({
+          type: 'li',
+          textContent: 'No find/replace operation. Click "add change" to get started.',
+        })
+      );
+    }
     for (let i = 0; i < this.changes.length; i++) {
       const change = this.changes[i];
       const li = this.createHTMLElement({
@@ -217,10 +237,60 @@ export class WebView {
       });
       ul.appendChild(li);
     }
+    this.updateMultiEditorButton();
     // Update the saved state
-    this._vscode.setState({changes: this.changes});
+    this._vscode.setState({changes: this.changes, multiEditor: this.multiEditor});
   };
 
+  updateMultiEditorButton = () => {
+    const html = /* HTML */ ` <vscode-button class="transform">
+        <span slot="start" class="codicon codicon-file"></span>
+        Apply changes
+      </vscode-button>
+      <vscode-button
+        class="multi-editor-toggle"
+        appearance="icon"
+        ariaLabel="search/replace in all the editors"
+      >
+        <span class="codicon codicon-book"></span>
+      </vscode-button>`;
+    const controls = document.querySelector('.controls');
+    controls.textContent = '';
+    controls.appendChild(
+      this.createHTMLElement({
+        type: 'div',
+        children: [
+          {
+            type: 'vscode-button',
+            className: 'transform',
+            onclick: this.handleTransform,
+            textContent: `Apply changes to ${this.multiEditor ? 'all files' : 'active tab'}`,
+            children: [
+              {
+                type: 'span',
+                slot: 'start',
+                className: `codicon codicon-${this.multiEditor ? 'book' : 'file'}`,
+              },
+  
+            ],
+          },
+          {
+            type: 'vscode-button',
+            ariaLabel: `search/replace in ${this.multiEditor ? 'active tab' : 'all tabs'}`,
+            appearance: 'icon',
+            className: 'multi-editor-toggle',
+            onclick: this.handleMultiEditorToggle,
+            children: [
+              {
+                type: 'span',
+                className: `codicon codicon-${this.multiEditor ? 'file' : 'book'}`,
+              },
+            ],
+          },
+        ],
+      })
+    );
+  };
   /**
    * @param {string} property
    * @param {number} i
