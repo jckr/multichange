@@ -21,6 +21,7 @@ export class WebView {
    * @property {string} [ariaLabel]
    * @property {string} [className]
    * @property {string} [placeholder]
+   * @property {string} [slot]
    * @property {string} [textContent]
    * @property {string} [value]
    * @property {function} [onclick]
@@ -51,24 +52,6 @@ export class WebView {
       this.updateChangeList();
     });
 
-    document.querySelector('.transform').addEventListener('click', () => {
-      this._vscode.postMessage({
-        type: 'send_changes_for_transforming',
-        value: {changes: this.changes, multiEditor: this.multiEditor},
-      });
-    });
-
-    document
-      .querySelector('vscode-button.details')
-      .addEventListener('click', () =>
-        document.querySelector('section.details').classList.toggle('visible')
-      );
-
-    document.querySelector('.multi-editor-toggle').addEventListener('click', () => {
-      this.multiEditor = !this.multiEditor;
-      this.updateChangeList();
-    });
-
     // Handle messages sent from the extension to the webview
     window.addEventListener('message', (event) => {
       const message = event.data; // The json data that the extension sent
@@ -89,6 +72,18 @@ export class WebView {
       }
     });
 
+    this.updateChangeList();
+  };
+
+  handleTransform = () => {
+    this._vscode.postMessage({
+      type: 'send_changes_for_transforming',
+      value: {changes: this.changes, multiEditor: this.multiEditor},
+    });
+  };
+
+  handleMultiEditorToggle = () => {
+    this.multiEditor = !this.multiEditor;
     this.updateChangeList();
   };
 
@@ -248,23 +243,53 @@ export class WebView {
   };
 
   updateMultiEditorButton = () => {
-    const statusSingle = 'Now searching/replacing in the active editor.';
-    const statusMulti = 'Now searching/replacing in all visible editors.';
-
-    const labelSingle = 'Search/replace in the active editor';
-    const labelMulti = 'Search/replace in all visible editors';
-    document.querySelector('.multi-editor-status').textContent = this.multiEditor
-      ? statusSingle
-      : statusMulti;
-    document.querySelector('.multi-editor-toggle').ariaLabel = this.multiEditor
-      ? labelMulti
-      : labelSingle;
-    document.querySelector('.multi-editor-toggle-label').textContent = this.multiEditor
-      ? labelMulti
-      : labelSingle;
-    document.querySelector('.multi-editor-toggle span').className = `codicon codicon-${
-      this.multiEditor ? 'book' : 'file'
-    }`;
+    const html = /* HTML */ ` <vscode-button class="transform">
+        <span slot="start" class="codicon codicon-file"></span>
+        Apply changes
+      </vscode-button>
+      <vscode-button
+        class="multi-editor-toggle"
+        appearance="icon"
+        ariaLabel="search/replace in all the editors"
+      >
+        <span class="codicon codicon-book"></span>
+      </vscode-button>`;
+    const controls = document.querySelector('.controls');
+    controls.textContent = '';
+    controls.appendChild(
+      this.createHTMLElement({
+        type: 'div',
+        children: [
+          {
+            type: 'vscode-button',
+            className: 'transform',
+            onclick: this.handleTransform,
+            textContent: `Apply changes to ${this.multiEditor ? 'all files' : 'active tab'}`,
+            children: [
+              {
+                type: 'span',
+                slot: 'start',
+                className: `codicon codicon-${this.multiEditor ? 'book' : 'file'}`,
+              },
+  
+            ],
+          },
+          {
+            type: 'vscode-button',
+            ariaLabel: `search/replace in ${this.multiEditor ? 'active tab' : 'all tabs'}`,
+            appearance: 'icon',
+            className: 'multi-editor-toggle',
+            onclick: this.handleMultiEditorToggle,
+            children: [
+              {
+                type: 'span',
+                className: `codicon codicon-${this.multiEditor ? 'file' : 'book'}`,
+              },
+            ],
+          },
+        ],
+      })
+    );
   };
   /**
    * @param {string} property
