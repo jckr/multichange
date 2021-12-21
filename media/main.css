@@ -1,5 +1,7 @@
 :root {
   --icon-width: 18px;
+  --error-border-color: rgb(190, 17, 0);
+  --error-background-color: rgb(90, 29,29);
 }
 
 body {
@@ -49,6 +51,29 @@ li.change {
 .input-block vscode-text-field {
   width: 100%;
 }
+
+.input-block.error vscode-text-field {
+  border: 1px solid var(--error-border-color);
+}
+
+.input-block.error vscode-text-field:focus {
+  outline: none;
+}
+
+.input-block .error-description {
+  display: none;
+  border: 1px solid var(--error-border-color);
+  background: var(--error-background-color);
+  z-index: 10;
+  position: absolute;
+  padding: 4px;
+  transform: translateY(-2px);
+}
+
+.input-block.error:focus-within .error-description {
+  display: block;
+}
+
 
 .find-options {
   position: absolute;
