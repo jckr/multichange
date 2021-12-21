@@ -9,6 +9,7 @@ export class WebView {
    * @typedef {Object} Change
    * @property {string} [matcher = '']
    * @property {string} [resolver = '']
+   * @property {string} [error = '']
    * @property {boolean} [isCaseSensitive = false]
    * @property {boolean} [isWholeWords = false]
    * @property {boolean} [isUsingRegEx = false]
@@ -18,6 +19,7 @@ export class WebView {
    * @typedef {Object} ElementSpec
    * @property {string} type
    * @property {string} [appearance]
+   * @property {boolean} [ariaInvalid]
    * @property {string} [ariaLabel]
    * @property {string} [className]
    * @property {string} [placeholder]
@@ -64,6 +66,11 @@ export class WebView {
           this._vscode.postMessage({type: 'send_changes_for_saving', value: this.changes});
           break;
         }
+        case 'send_regex_error':
+          const {index, errorMessage} = message.regex_error;
+          this.changes[index].error = errorMessage;
+          this.updateChangeList();
+          break;
         case 'import': {
           this.changes = message.changes;
           this.updateChangeList();
@@ -91,6 +98,7 @@ export class WebView {
    * updates the UI following any update to the state
    */
   updateChangeList = () => {
+    console.log(this.changes);
     const ul = document.querySelector('ul.change-list');
     ul.textContent = '';
     if (this.changes.length === 0) {
@@ -103,6 +111,8 @@ export class WebView {
     }
     for (let i = 0; i < this.changes.length; i++) {
       const change = this.changes[i];
+      const hasError = change.error !== undefined && change.error !== '';
+
       const li = this.createHTMLElement({
         type: 'li',
         className: 'change',
@@ -117,14 +127,20 @@ export class WebView {
                 children: [
                   {
                     type: 'div',
-                    className: 'input-block find-block',
+                    className: `input-block find-block${hasError ? ' error' : ''}`,
                     children: [
                       {
+                        ariaInvalid: hasError,
                         type: 'vscode-text-field',
                         className: 'find',
                         placeholder: 'Find',
                         value: change.matcher,
                         onchange: this.handleChange('matcher', i),
+                      },
+                      {
+                        type: 'div',
+                        className: 'error-description',
+                        textContent: change.error
                       },
                       {
                         type: 'div',
@@ -271,7 +287,6 @@ export class WebView {
                 slot: 'start',
                 className: `codicon codicon-${this.multiEditor ? 'book' : 'file'}`,
               },
-  
             ],
           },
           {
@@ -291,6 +306,20 @@ export class WebView {
       })
     );
   };
+
+  /**
+   * @param {number} i
+   * Checks if change #i contains a valid regex
+   */
+  checkValidRegex = (i) => {
+    const change = this.changes[i];
+    if (!change.isUsingRegEx) {
+      change.error = '';
+      return;
+    }
+    this._vscode.postMessage({type: 'check_regex', index: i, value: change});
+  }
+
   /**
    * @param {string} property
    * @param {number} i
@@ -303,6 +332,10 @@ export class WebView {
       const target = e.currentTarget;
       // updates this property based on the value of the input element
       this.changes[i][property] = /** @type {HTMLInputElement} */ (target).value;
+
+      if (property === 'matcher') {
+        this.checkValidRegex(i);
+      }
       this.updateChangeList();
     };
   };
@@ -315,6 +348,9 @@ export class WebView {
     // toggles the value of this property
     return () => {
       this.changes[i][property] = !this.changes[i][property];
+      if (property === 'isUsingRegEx') {
+        this.checkValidRegex(i);
+      }
       this.updateChangeList();
     };
   };

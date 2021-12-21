@@ -29,7 +29,7 @@ export function getWebviewContent(webview: Webview, extensionUri: Uri) {
     'dist',
     'codicon.css',
   ]);
-
+  const utilUri = getUri(webview, extensionUri, ['src','utilities', 'regex-utils']);
   // Do the same for the stylesheet.
   const styleResetUri = getUri(webview, extensionUri, ['media', 'reset.css']);
   const styleVSCodeUri = getUri(webview, extensionUri, ['media', 'vscode.css']);

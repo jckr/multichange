@@ -47,6 +47,10 @@ export class MultichangeViewProvider implements WebviewViewProvider {
           this._handleTransform(data.value.changes, data.value.multiEditor);
           break;
         }
+        case 'check_regex': {
+          this._handleCheckRegex(data.index, data.value);
+          break;
+        }
         case 'send_changes_for_saving': {
           this._handleSave(data.value);
           break;
@@ -126,15 +130,30 @@ export class MultichangeViewProvider implements WebviewViewProvider {
         editor.edit((editBuilder) => editBuilder.replace(rangeOfEntireDocument, text));
     }
   }
+
+  private _handleCheckRegex(index: number, change: Change) {
+    try {
+      const re = createRegEx(change);
+    }
+    catch(e) {
+      if (e instanceof Error) {
+        this._view?.webview.postMessage({type: 'send_regex_error', regex_error: {index, errorMessage: e.message}})
+      }
+    }
+  }
+}
+
+function createRegEx(change: Change) {
+  const flags = change.isCaseSensitive ? 'gm' : 'gim';
+  const coreMatcher = change.isUsingRegEx
+    ? change.matcher
+    : change.matcher.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&');
+  const matcher = change.isWholeWords ? `\\b${coreMatcher}\\b` : coreMatcher;
+  return new RegExp(matcher, flags);
 }
 
 function getReplacers(changes: Array<Change>) {
   return changes.map((change) => {
-    const flags = change.isCaseSensitive ? 'gm' : 'gim';
-    const coreMatcher = change.isUsingRegEx
-      ? change.matcher
-      : change.matcher.replace(/[#-.]|[[-^]|[?|{}]/g, '\\$&');
-    const matcher = change.isWholeWords ? `\\b${coreMatcher}\\b` : coreMatcher;
-    return (t: string) => t.replace(new RegExp(matcher, flags), change.resolver);
+    return (t: string) => t.replace(createRegEx(change), change.resolver);
   });
 }
