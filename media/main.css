@@ -74,16 +74,6 @@ li.change {
   display: block;
 }
 
-
-.find-options {
-  position: absolute;
-  top: 0;
-  right: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
 .rank-options {
   display: flex;
   flex-direction: column;

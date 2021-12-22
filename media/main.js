@@ -136,21 +136,13 @@ export class WebView {
                         placeholder: 'Find',
                         value: change.matcher,
                         onchange: this.handleChange('matcher', i),
-                      },
-                      {
-                        type: 'div',
-                        className: 'error-description',
-                        textContent: change.error
-                      },
-                      {
-                        type: 'div',
-                        className: 'find-options',
                         children: [
                           {
                             type: 'vscode-button',
                             appearance: 'icon',
                             ariaLabel: 'Match case',
                             onclick: this.handleClick('isCaseSensitive', i),
+                            slot: 'end',
                             children: [
                               {
                                 type: 'span',
@@ -165,6 +157,7 @@ export class WebView {
                             appearance: 'icon',
                             ariaLabel: 'Match whole word',
                             onclick: this.handleClick('isWholeWords', i),
+                            slot: 'end',
                             children: [
                               {
                                 type: 'span',
@@ -179,6 +172,7 @@ export class WebView {
                             appearance: 'icon',
                             ariaLabel: 'Use regular expression',
                             onclick: this.handleClick('isUsingRegEx', i),
+                            slot: 'end',
                             children: [
                               {
                                 type: 'span',
@@ -189,6 +183,11 @@ export class WebView {
                             ],
                           },
                         ],
+                      },
+                      {
+                        type: 'div',
+                        className: 'error-description',
+                        textContent: change.error
                       },
                     ],
                   },
