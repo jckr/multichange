@@ -134,6 +134,9 @@ export class MultichangeViewProvider implements WebviewViewProvider {
   private _handleCheckRegex(index: number, change: Change) {
     try {
       const re = createRegEx(change);
+      // If the RegExp is erroneous, the above will throw and we'll go to the catch clause. 
+      // If we get to the next statement, that means this RegExp is valid and we can clear its error status. 
+      this._view?.webview.postMessage({type: 'send_regex_error', regex_error: {index, errorMessage: ''}})
     }
     catch(e) {
       if (e instanceof Error) {
